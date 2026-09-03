@@ -254,9 +254,25 @@ This is a known limitation acknowledged in the thesis — see /api/about for det
 
 # ── Middleware ─────────────────────────────────────────────────────────────
 
+def _build_cors_origins() -> list[str]:
+    """
+    Build final CORS origins list.
+    Always includes localhost origins for local dev.
+    In production, the CORS_ORIGINS env var should include the Vercel URL.
+    """
+    origins = settings.cors_origins_list
+    # Always include localhost for healthchecks and local dev
+    for default in ["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"]:
+        if default not in origins:
+            origins.append(default)
+    return origins
+
+_cors_origins = _build_cors_origins()
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
+    allow_origins=_cors_origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",  # Allow all Vercel preview deployments
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

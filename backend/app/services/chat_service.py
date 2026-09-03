@@ -434,6 +434,12 @@ class PandasDataAgent:
         uri = self.db_sync_url
         if not uri.startswith("postgresql://"):
             uri = re.sub(r"^postgresql\+\w+://", "postgresql://", uri)
+        # Neon and other cloud PostgreSQL providers require SSL
+        _cloud_hosts = ["neon.tech", ".rds.amazonaws.com", "supabase.co"]
+        needs_ssl = any(h in uri for h in _cloud_hosts)
+        if needs_ssl and "sslmode=" not in uri:
+            sep = "&" if "?" in uri else "?"
+            uri = f"{uri}{sep}sslmode=require"
         return psycopg2.connect(uri)
 
     def load_transactions_df(self, limit: int = 10000) -> Optional[pd.DataFrame]:

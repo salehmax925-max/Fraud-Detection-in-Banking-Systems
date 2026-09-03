@@ -1,52 +1,54 @@
-# Python
+# ── Python ──────────────────────────────────────────────────────────────────
 .venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
 *.egg-info/
 dist/
 build/
+.Python
 
-# Environment files (contain secrets)
+# ── Environment / Secrets ────────────────────────────────────────────────────
 .env
 backend/.env
+.env.local
+.env.production
+# Keep .env.example (it's a template with no secrets)
+!.env.example
+!.env.production.example
 
-# Large data files — too big for GitHub (use Git LFS or cloud storage)
+# ── Large Data Files (too big for GitHub) ────────────────────────────────────
 creditcard.csv
 data/processed/train.parquet
 data/processed/val.parquet
+# Keep test.parquet (16MB — needed for simulation endpoint)
+# data/processed/test.parquet  ← intentionally kept
 
-# Keep test.parquet (needed by simulation endpoint at runtime)
-# data/processed/test.parquet   ← intentionally kept
-
-# ML model artifacts — kept in repo (small enough: ~5MB total)
-# models/*.joblib               ← intentionally kept
-
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.idea/
-.vscode/
-
-# Frontend build output (Vercel builds from source)
+# ── Frontend Build ────────────────────────────────────────────────────────────
 frontend/dist/
 frontend/node_modules/
+.vite/
 
-# Logs
-*.log
-
-# Windows
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
 *.tmp
 *.bak
 
-# Large PDFs and docs (optional - remove if you want them in the repo)
-*.docx
-*.pdf
+# ── IDE ────────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+
+# ── Large Binary Assets (not needed in repo) ──────────────────────────────────
 OllamaSetup.exe
-fraud_results*/
 manus_package/
+fraud_results*/
 notebooks/
+
+# ── Python notebooks ─────────────────────────────────────────────────────────
+*.ipynb_checkpoints/

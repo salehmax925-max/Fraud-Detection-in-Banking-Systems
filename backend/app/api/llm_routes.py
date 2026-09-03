@@ -355,7 +355,8 @@ async def _call_ollama(
 # FastAPI endpoint
 # ---------------------------------------------------------------------------
 
-OLLAMA_MODEL = "qwen3:8b"
+from app.core.config import settings as _settings
+OLLAMA_MODEL = _settings.OLLAMA_MODEL
 
 
 @router.post("/explain", response_model=ExplainResponse, tags=["Explanations"])

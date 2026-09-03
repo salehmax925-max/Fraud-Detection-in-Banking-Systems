@@ -4,13 +4,14 @@ backend/app/core/database.py
 Async PostgreSQL database setup via SQLAlchemy + asyncpg.
 
 Includes startup schema verification to detect missing columns early.
+Neon PostgreSQL: SSL is automatically enabled when the host contains 'neon.tech'.
 """
 from __future__ import annotations
 
 import logging
 from typing import Optional
 
-from sqlalchemy import text
+from sqlalchemy import text, event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
 
@@ -18,13 +19,51 @@ from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
+
+def _build_async_engine_url(raw_url: str) -> str:
+    """
+    Convert a raw DATABASE_URL to the asyncpg-compatible format.
+
+    Handles:
+    - postgresql:// → postgresql+asyncpg://
+    - postgresql+psycopg2:// → postgresql+asyncpg://
+    - Neon URLs with ?sslmode=require → removed (asyncpg uses connect_args instead)
+    """
+    import re
+    # Normalize driver prefix
+    url = re.sub(r"^postgresql(\+\w+)?://", "postgresql+asyncpg://", raw_url)
+    # Remove sslmode query param — handled via connect_args below
+    url = re.sub(r"[?&]sslmode=[^&]*", "", url).rstrip("?&")
+    return url
+
+
+def _requires_ssl(url: str) -> bool:
+    """Return True if the database URL points to a cloud service requiring SSL (Neon, RDS, etc.)."""
+    ssl_hosts = ["neon.tech", ".rds.amazonaws.com", "supabase.co", "planetscale.com", "cockroachlabs.cloud"]
+    return any(h in url for h in ssl_hosts) or "sslmode=require" in url
+
+
+_raw_db_url = settings.DATABASE_URL
+_async_url = _build_async_engine_url(_raw_db_url)
+_use_ssl = _requires_ssl(_raw_db_url)
+
+_connect_args: dict = {}
+if _use_ssl:
+    import ssl as _ssl_mod
+    _ssl_ctx = _ssl_mod.create_default_context()
+    _ssl_ctx.check_hostname = False
+    _ssl_ctx.verify_mode = _ssl_mod.CERT_NONE  # Neon uses valid certs; CERT_NONE avoids CA bundle issues
+    _connect_args = {"ssl": _ssl_ctx}
+    logger.info("Database SSL enabled (Neon/cloud host detected)")
+
 # Create async engine
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    _async_url,
     echo=settings.DEBUG,
     pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20,
+    pool_size=5,
+    max_overflow=10,
+    connect_args=_connect_args,
 )
 
 # Session factory

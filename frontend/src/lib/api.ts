@@ -1,5 +1,7 @@
 // src/lib/api.ts
-// Axios-based API client — all calls go to http://localhost:8000/api
+// Axios-based API client
+// In local dev: baseURL = '/api' (proxied by Vite to http://localhost:8000)
+// In production: baseURL = VITE_API_BASE_URL/api (set on Vercel to Render backend URL)
 import axios from 'axios'
 import type {
   ScoreRequest, ScoreResponse, PaginatedTransactions,
@@ -9,10 +11,17 @@ import type {
   DashboardStats, UserListItem,
 } from '../types'
 
+// VITE_API_BASE_URL should be set to your Render backend URL in Vercel, e.g.:
+// https://fraudshield-backend.onrender.com
+// When not set, relative '/api' is used (local dev proxy or Vercel rewrite handles it)
+const _backendBase = import.meta.env.VITE_API_BASE_URL || ''
+const _apiBase = _backendBase ? `${_backendBase}/api` : '/api'
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: _apiBase,
   timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 })
 
 // Request/response logging in dev
