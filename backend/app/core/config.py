@@ -75,11 +75,11 @@ class Settings(BaseSettings):
 
     @property
     def model_dir_path(self) -> Path:
-        return Path(self.MODEL_DIR)
+        return Path(self.MODEL_DIR.strip())
 
     @property
     def processed_dir_path(self) -> Path:
-        return Path(self.PROCESSED_DATA_DIR)
+        return Path(self.PROCESSED_DATA_DIR.strip())
 
     @property
     def database_sync_url_clean(self) -> str:

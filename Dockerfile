@@ -46,6 +46,9 @@ ENV PYTHONPATH=/app:/app/backend
 ENV SKIP_MODEL_VERIFICATION=True
 ENV ENVIRONMENT=production
 ENV DEBUG=False
+# Hardcode model paths as Dockerfile defaults (prevents env var newline corruption)
+ENV MODEL_DIR=/app/models
+ENV PROCESSED_DATA_DIR=/app/data/processed
 
 # ── Port ───────────────────────────────────────────────────────────────────
 # Render injects $PORT automatically. Default to 8000 for local Docker runs.
