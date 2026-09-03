@@ -1,0 +1,32 @@
+# Force binary files to be treated as binary (no CRLF conversion)
+# This is critical for model artifacts — CRLF conversion breaks SHA-256 checksums
+*.joblib binary
+*.parquet binary
+*.pkl binary
+*.pickle binary
+*.h5 binary
+*.bin binary
+*.npy binary
+*.npz binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Force text files to use LF
+*.py text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+*.ps1 text eol=crlf
