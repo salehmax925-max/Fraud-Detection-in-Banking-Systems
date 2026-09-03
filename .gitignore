@@ -1,0 +1,52 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Environment files (contain secrets)
+.env
+backend/.env
+
+# Large data files — too big for GitHub (use Git LFS or cloud storage)
+creditcard.csv
+data/processed/train.parquet
+data/processed/val.parquet
+
+# Keep test.parquet (needed by simulation endpoint at runtime)
+# data/processed/test.parquet   ← intentionally kept
+
+# ML model artifacts — kept in repo (small enough: ~5MB total)
+# models/*.joblib               ← intentionally kept
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Frontend build output (Vercel builds from source)
+frontend/dist/
+frontend/node_modules/
+
+# Logs
+*.log
+
+# Windows
+*.tmp
+*.bak
+
+# Large PDFs and docs (optional - remove if you want them in the repo)
+*.docx
+*.pdf
+OllamaSetup.exe
+fraud_results*/
+manus_package/
+notebooks/

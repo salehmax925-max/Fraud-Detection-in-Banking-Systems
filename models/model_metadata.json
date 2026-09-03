@@ -1,0 +1,123 @@
+{
+  "training_date": "2026-07-27T11:50:55.144389+00:00",
+  "model_version": "1.0.0",
+  "thesis_title": "Fraud Detection in Banking \u2014 Al-Balqa Applied University",
+  "training_environment": "Google Colab (T4 GPU)",
+  "python_version": "3.12.13",
+  "optuna_trials": 28,
+  "cv_folds": 3,
+  "optuna_best_params": {
+    "learning_rate": 0.17150732736240926,
+    "max_depth": 5,
+    "n_estimators": 354,
+    "subsample": 0.8664693747781168,
+    "colsample_bytree": 0.5713776048245002,
+    "reg_alpha": 0.14393920293276619,
+    "reg_lambda": 3.351008902645134
+  },
+  "optuna_best_cv_f1": 0.8043941051847652,
+  "fusion_weights": {
+    "xgb": 0.7,
+    "isolation_forest": 0.3
+  },
+  "thresholds": {
+    "block": 0.85,
+    "review": 0.5
+  },
+  "isolation_forest_normalization": {
+    "score_min": 0.3517296941042656,
+    "score_max": 0.7267472822958845
+  },
+  "feature_names": [
+    "V1",
+    "V2",
+    "V3",
+    "V4",
+    "V5",
+    "V6",
+    "V7",
+    "V8",
+    "V9",
+    "V10",
+    "V11",
+    "V12",
+    "V13",
+    "V14",
+    "V15",
+    "V16",
+    "V17",
+    "V18",
+    "V19",
+    "V20",
+    "V21",
+    "V22",
+    "V23",
+    "V24",
+    "V25",
+    "V26",
+    "V27",
+    "V28",
+    "Amount",
+    "Time",
+    "tx_freq_1h",
+    "tx_freq_24h",
+    "amount_deviation_z",
+    "time_of_day_risk",
+    "velocity_change",
+    "location_entropy"
+  ],
+  "feature_count": 36,
+  "evaluation_metrics": {
+    "hybrid": {
+      "model": "Hybrid Fusion",
+      "threshold": 0.5,
+      "precision": 0.853933,
+      "recall": 0.8,
+      "f1_score": 0.826087,
+      "roc_auc": 0.950945,
+      "mcc": 0.826246,
+      "confusion_matrix": {
+        "true_negatives": 56638,
+        "false_positives": 13,
+        "false_negatives": 19,
+        "true_positives": 76
+      },
+      "support_fraud": 95,
+      "support_legitimate": 56651
+    },
+    "xgb": {
+      "model": "XGBoost Only",
+      "threshold": 0.5,
+      "precision": 0.846154,
+      "recall": 0.810526,
+      "f1_score": 0.827957,
+      "roc_auc": 0.963226,
+      "mcc": 0.827867,
+      "confusion_matrix": {
+        "true_negatives": 56637,
+        "false_positives": 14,
+        "false_negatives": 18,
+        "true_positives": 77
+      },
+      "support_fraud": 95,
+      "support_legitimate": 56651
+    },
+    "if": {
+      "model": "Isolation Forest Only",
+      "threshold": 0.5,
+      "precision": 0.070064,
+      "recall": 0.694737,
+      "f1_score": 0.12729,
+      "roc_auc": 0.931321,
+      "mcc": 0.217346,
+      "confusion_matrix": {
+        "true_negatives": 55775,
+        "false_positives": 876,
+        "false_negatives": 29,
+        "true_positives": 66
+      },
+      "support_fraud": 95,
+      "support_legitimate": 56651
+    }
+  }
+}
