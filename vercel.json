@@ -1,7 +1,9 @@
 {
   "version": 2,
   "name": "fraudshield-ai",
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "framework": null,
+  "installCommand": "cd frontend && npm install",
+  "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {

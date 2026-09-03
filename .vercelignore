@@ -1,0 +1,23 @@
+# Vercel deployment only includes the frontend.
+# All backend Python code is excluded from Vercel scanning.
+backend/
+ml/
+models/
+data/
+scripts/
+alembic/
+.venv/
+__pycache__/
+*.pyc
+*.py
+pyproject.toml
+requirements.txt
+docker-compose.yml
+Dockerfile
+start_all.bat
+start_backend.bat
+start_backend.ps1
+start_db.ps1
+start_frontend.bat
+run_server.py
+creditcard.csv
