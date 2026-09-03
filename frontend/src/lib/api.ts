@@ -11,17 +11,20 @@ import type {
   DashboardStats, UserListItem,
 } from '../types'
 
-// VITE_API_BASE_URL should be set to your Render backend URL in Vercel, e.g.:
-// https://fraudshield-backend.onrender.com
-// When not set, relative '/api' is used (local dev proxy or Vercel rewrite handles it)
-const _backendBase = import.meta.env.VITE_API_BASE_URL || ''
-const _apiBase = _backendBase ? `${_backendBase}/api` : '/api'
-
 const api = axios.create({
-  baseURL: _apiBase,
+  baseURL: '/api',
   timeout: 60000,
   headers: { 'Content-Type': 'application/json' },
   withCredentials: true,
+})
+
+// Automatically attach Bearer token if present in localStorage
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('fraudshield_token')
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`
+  }
+  return config
 })
 
 // Request/response logging in dev

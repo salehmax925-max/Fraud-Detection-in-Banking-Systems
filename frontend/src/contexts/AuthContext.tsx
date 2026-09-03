@@ -40,12 +40,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // On mount, check if we have a valid session by calling /api/auth/me
   useEffect(() => {
+    const savedToken = localStorage.getItem('fraudshield_token')
+    if (savedToken) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`
+    }
     const checkSession = async () => {
       try {
         const resp = await axios.get('/api/auth/me', { withCredentials: true })
         setUser(resp.data)
       } catch {
         setUser(null)
+        localStorage.removeItem('fraudshield_token')
+        delete axios.defaults.headers.common['Authorization']
       } finally {
         setIsLoading(false)
       }
@@ -59,6 +65,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       { username, password },
       { withCredentials: true }
     )
+    if (resp.data.token) {
+      localStorage.setItem('fraudshield_token', resp.data.token)
+      axios.defaults.headers.common['Authorization'] = `Bearer ${resp.data.token}`
+    }
     setUser(resp.data.user)
   }
 
@@ -68,6 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore errors on logout
     } finally {
+      localStorage.removeItem('fraudshield_token')
+      delete axios.defaults.headers.common['Authorization']
       setUser(null)
     }
   }

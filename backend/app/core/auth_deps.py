@@ -15,7 +15,7 @@ from __future__ import annotations
 import logging
 from typing import Optional
 
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Cookie, Depends, Header, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -28,22 +28,20 @@ logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
-# Core dependency: extract and validate JWT from cookie
+# Core dependency: extract and validate JWT from cookie or Authorization header
 # ---------------------------------------------------------------------------
 
 async def get_current_user(
     access_token: Optional[str] = Cookie(default=None),
+    authorization: Optional[str] = Header(default=None),
     db: AsyncSession = Depends(get_db),
 ) -> AuthUser:
     """
     FastAPI dependency that:
-    1. Reads the JWT from the 'access_token' HttpOnly cookie
+    1. Reads JWT from 'access_token' cookie OR 'Authorization: Bearer <token>' header
     2. Decodes and verifies the token
     3. Loads the AuthUser from DB
     4. Raises 401 if any step fails
-
-    Returns:
-        The currently authenticated AuthUser ORM object.
     """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -51,10 +49,17 @@ async def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    if not access_token:
+    token = access_token
+    if not token and authorization:
+        if authorization.startswith("Bearer "):
+            token = authorization[7:].strip()
+        else:
+            token = authorization.strip()
+
+    if not token:
         raise credentials_exception
 
-    payload = decode_access_token(access_token)
+    payload = decode_access_token(token)
     if payload is None:
         raise credentials_exception
 

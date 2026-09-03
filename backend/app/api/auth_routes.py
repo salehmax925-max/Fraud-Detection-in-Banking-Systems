@@ -57,6 +57,7 @@ class UserInfo(BaseModel):
 class LoginResponse(BaseModel):
     message: str
     user: UserInfo
+    token: Optional[str] = None
 
 
 # ---------------------------------------------------------------------------
@@ -152,13 +153,16 @@ async def login(
         }
     )
 
+    from app.core.config import settings
+    is_https = settings.ENVIRONMENT == "production"
+
     # Set HttpOnly cookie
     response.set_cookie(
         key="access_token",
         value=token,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax",
+        secure=is_https,
+        samesite="none" if is_https else "lax",
         max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
         path="/",
     )
@@ -185,6 +189,7 @@ async def login(
             last_login=user.last_login,
             permissions=perms,
         ),
+        token=token,
     )
 
 
@@ -207,7 +212,14 @@ async def logout(
         description=f"{current_user.display_name} logged out",
     )
 
-    response.delete_cookie(key="access_token", path="/")
+    from app.core.config import settings
+    is_https = settings.ENVIRONMENT == "production"
+    response.delete_cookie(
+        key="access_token",
+        path="/",
+        secure=is_https,
+        samesite="none" if is_https else "lax",
+    )
     logger.info("User '%s' logged out", current_user.username)
     return {"message": "Logged out successfully"}
 
