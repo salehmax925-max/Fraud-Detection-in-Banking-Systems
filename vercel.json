@@ -5,6 +5,11 @@
   "installCommand": "cd frontend && npm install",
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
+  "build": {
+    "env": {
+      "VITE_API_BASE_URL": "https://fraudshield-backend1-w1vk.onrender.com"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",

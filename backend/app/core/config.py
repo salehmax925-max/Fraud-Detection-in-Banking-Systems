@@ -42,7 +42,13 @@ class Settings(BaseSettings):
     DATABASE_SYNC_URL: str = "postgresql+psycopg2://fraud:fraud_pass@127.0.0.1:5432/frauddb"
 
     # CORS (comma-separated list of allowed origins)
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    # Regex also allows all *.vercel.app preview deployments (set in main.py)
+    CORS_ORIGINS: str = (
+        "https://fraudshield-ai.vercel.app,"
+        "https://fraudshield-backend1-w1vk.onrender.com,"
+        "http://localhost:5173,"
+        "http://localhost:3000"
+    )
 
     # Model artifacts
     MODEL_DIR: str = str(_BACKEND_DIR.parent / "models")
